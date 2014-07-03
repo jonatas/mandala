@@ -1,0 +1,20 @@
+{
+  "name": "mandala",
+  "version": "0.0.0",
+  "description": "Mandalas' panel",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "Jônatas Davi Paganini",
+  "license": "BSD",
+  "gitHead": "a4d3c49619bf648e094dcd24dbd580adb6ed8acb",
+  "devDependencies": {
+    "coffee-script": "^1.7.1",
+    "gulp": "^3.8.2",
+    "gulp-clean": "^0.3.1",
+    "gulp-util": "^2.2.18",
+    "run-sequence": "^0.3.6"
+  }
+}

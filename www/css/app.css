@@ -6,6 +6,9 @@
   -ms-user-select: none;
   user-select: none;
 }
+input[type='range']{
+  -webkit-touch-callout: clear;
+}
 body {
   width: 100%;
   height: 100%;
