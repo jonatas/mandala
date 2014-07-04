@@ -69,6 +69,12 @@
             return $scope.turn_on_motor = true;
           }
         };
+        $scope.showOriginal = function(element) {
+          return element.mandala = element.mandala.replace("b.png", ".png");
+        };
+        $scope.showInCircle = function(element) {
+          return element.mandala = element.mandala.replace(".png", "b.png");
+        };
         $scope.switch_on_off = function() {
           var image, state, _k, _len2, _ref2, _results;
           if ($scope.turn_on_motor) {

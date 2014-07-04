@@ -15,11 +15,11 @@
     </script>
     <div class="tools">
       <input type="checkbox" ng-model="turn_on_motor" ng-change="switch_on_off()"/>
-       <input type="range" ng-model="accelerator" min="0" max="60000" step="1" value="1804.32" ng-change="accelerate()" />
+       <input type="range" ng-model="accelerator" min="0" max="2000" step="1" value="1804.32" ng-change="accelerate()" />
        {{velocimeter()}} 
     </div>
     <div class="mandalas-panel">
-      <img ng-repeat="mandala in mandalas" ng-src="{{mandala}}" class="mandala" />
+      <img ng-repeat="mandala in mandalas" ng-mouseover="showOriginal(this)" ng-mouseout="showInCircle(this)" ng-src="{{mandala}}" class="mandala" />
     </div>
     <link rel="stylesheet" href="css/app.css" title="main style" type="css" />
     <script type="text/javascript" charset="utf-8" src="js/angular.js"></script>

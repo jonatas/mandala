@@ -46,6 +46,11 @@ window.mandalas =
           $scope.turn_on_motor = true
 
 
+      $scope.showOriginal = (element) ->
+        element.mandala = element.mandala.replace("b.png", ".png")
+      $scope.showInCircle = (element) ->
+        element.mandala = element.mandala.replace(".png", "b.png")
+
       $scope.switch_on_off = ->
         if $scope.turn_on_motor
           state = "running"
