@@ -8,6 +8,7 @@
 }
 input[type='range']{
   -webkit-touch-callout: clear;
+  width: 80%;
 }
 body {
   width: 100%;
@@ -20,9 +21,9 @@ body {
   left: 0;
   background-color:yellow;
   color: green;
-  width: 240px;
+  width: 100%;
   z-index: 1;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
 #turn_on_motor{
   float: left;
