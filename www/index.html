@@ -17,6 +17,7 @@
       <input type="checkbox" ng-model="turn_on_motor" ng-change="switch_on_off()"/>
        <input type="range" ng-model="accelerator" min="0" max="2000" step="1" value="1804.32" ng-change="accelerate()" />
        {{velocimeter()}} 
+      <input type="checkbox" ng-model="mute" ng-change="switch_mute()" title="Mute"/>
     </div>
     <div class="mandalas-panel">
       <img ng-repeat="mandala in mandalas" ng-mouseover="showOriginal(this)" ng-mouseout="showInCircle(this)" ng-src="{{mandala}}" class="mandala" />
@@ -27,8 +28,11 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
     <script type="text/javascript" charset="utf-8">
-      mandalas.initialize();
-      //mandalas.onDeviceReady();
+      if (window.cordova === undefined){
+        mandalas.onDeviceReady();
+      } else{
+        mandalas.initialize();
+      }
       </script>
   </body>
 </html>

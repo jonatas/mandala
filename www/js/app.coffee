@@ -1,3 +1,6 @@
+
+window.synth = T("sin")
+#synth.play()
 window.mandalas =
   initialize: ->
     console.log("initialize binding events...")
@@ -34,12 +37,13 @@ window.main = ($scope) ->
 
   $scope.velocimeter = -> "#{$scope.accelerator} RPM"
   $scope.accelerate = ->
+    synth.pause()
     newFrequency = {freq: parseInt($scope.accelerator)}
     console.log("new Frequency: "+newFrequency)
-    $scope.synth.set(newFrequency)
-    $scope.synth.play()
+    synth.set(newFrequency)
+    synth.play()if $scope.mute isnt true
     for mandala in $scope.img_mandalas()
-      setAnimation(mandala, "") if mandala !=null
+      setAnimation(mandala, "") if mandala isnt null
 
     newAnimation = ->
       actualAnimation = "rotation #{ $scope.fromRPM()}s infinite linear"
@@ -52,17 +56,19 @@ window.main = ($scope) ->
 
 
   $scope.showOriginal = (element) ->
-    element.mandala = element.mandala.replace("b.png", ".png")
+    if not $scope.turn_on_motor
+      element.mandala = element.mandala.replace("b.png", ".png")
   $scope.showInCircle = (element) ->
-    element.mandala = element.mandala.replace(".png", "b.png")
+    if not $scope.turn_on_motor
+      element.mandala = element.mandala.replace(".png", "b.png")
 
   $scope.switch_on_off = ->
     if $scope.turn_on_motor
       state = "running"
-      $scope.synth.play()
+      synth.play() if $scope.mute isnt true
     else
       state = "paused"
-      $scope.synth.pause()
+      synth.pause() if $scope.mute isnt true
 
 
     for image in $scope.img_mandalas()
@@ -70,5 +76,8 @@ window.main = ($scope) ->
 
   $scope.turn_on_motor = false
   $scope.accelerator = 0
+  $scope.mute = true
+  $scope.switch_mute = ->
+    if $scope.mute then synth.pause() else synth.play()
 
-  $scope.synth = T("sin")
+
