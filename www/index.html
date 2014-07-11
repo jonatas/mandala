@@ -19,11 +19,15 @@
        {{velocimeter()}} 
       <input type="checkbox" ng-model="mute" ng-change="switch_mute()" title="Mute"/>
     </div>
+    <div class="right-panel">
+      <div ng-repeat="color in currentMandalaPalette" class="pallete-color" style="background-color: rgb({{color[0]}},{{color[1]}},{{color[2]}})"></div>
+    </div>
     <div class="mandalas-panel">
       <img ng-repeat="mandala in mandalas" ng-mouseover="showOriginal(this)" ng-mouseout="showInCircle(this)" ng-src="{{mandala}}" class="mandala" />
     </div>
     <link rel="stylesheet" href="css/app.css" title="main style" type="css" />
     <script type="text/javascript" charset="utf-8" src="js/angular.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/color-thief.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/timbre.dev.js"></script>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/app.js"></script>

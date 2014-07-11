@@ -1,6 +1,7 @@
 
 window.synth = T("sin")
 #synth.play()
+gid = (name)-> document.getElementById(name)
 window.mandalas =
   initialize: ->
     console.log("initialize binding events...")
@@ -31,8 +32,11 @@ window.main = ($scope) ->
   for livro in $scope.livros_b
     $scope.mandalas.push("mandalas/2/500x500/0#{livro}b.png")
 
-  $scope.img_mandalas = ->
-    document.querySelector("img[src='#{mandala}']") for mandala in $scope.mandalas
+  $scope.imgMandala = (mandala) ->
+    document.querySelector("img[src='#{mandala}']")
+
+  $scope.imgMandalas = ->
+    $scope.imgMandala(mandala) for mandala in $scope.mandalas
 
 
   $scope.velocimeter = -> "#{$scope.accelerator} RPM"
@@ -42,12 +46,12 @@ window.main = ($scope) ->
     console.log("new Frequency: "+newFrequency)
     synth.set(newFrequency)
     synth.play()if $scope.mute isnt true
-    for mandala in $scope.img_mandalas()
+    for mandala in $scope.imgMandalas()
       setAnimation(mandala, "") if mandala isnt null
 
     newAnimation = ->
       actualAnimation = "rotation #{ $scope.fromRPM()}s infinite linear"
-      for mandala in $scope.img_mandalas()
+      for mandala in $scope.imgMandalas()
         setAnimation(mandala, actualAnimation)
     setTimeout(newAnimation, 200)
 
@@ -57,7 +61,10 @@ window.main = ($scope) ->
 
   $scope.showOriginal = (element) ->
     if not $scope.turn_on_motor
-      element.mandala = element.mandala.replace("b.png", ".png")
+      if $scope.currentMandala is null or $scope.currentMandala isnt element.mandala
+        $scope.currentMandala = element.mandala
+        $scope.showCurrentMandalaPalette()
+        element.mandala = element.mandala.replace("b.png", ".png")
   $scope.showInCircle = (element) ->
     if not $scope.turn_on_motor
       element.mandala = element.mandala.replace(".png", "b.png")
@@ -71,7 +78,7 @@ window.main = ($scope) ->
       synth.pause() if $scope.mute isnt true
 
 
-    for image in $scope.img_mandalas()
+    for image in $scope.imgMandalas()
       setAnimationState(image, state)
 
   $scope.turn_on_motor = false
@@ -80,4 +87,13 @@ window.main = ($scope) ->
   $scope.switch_mute = ->
     if $scope.mute then synth.pause() else synth.play()
 
+  $scope.colorThief = new ColorThief()
+  $scope.showCurrentMandalaPalette = () ->
+    img = $scope.imgMandala($scope.currentMandala)
+    return if img is null
+    $scope.currentMandalaPalette = $scope.colorThief.getPalette(img)
+
+
+
+     
 
