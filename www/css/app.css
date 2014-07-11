@@ -19,10 +19,10 @@ body {
   position: fixed;
   bottom: 0;
   left: 0;
-  background-color:yellow;
+  background-color:black;
   color: green;
   width: 100%;
-  z-index: 1;
+  z-index: 100;
   margin-bottom: 0px;
 }
 #turn_on_motor{
@@ -60,6 +60,7 @@ body { text-align: center; }
 .mandalas-panel{
   overflow-y: scroll;
   top: 0;
+  z-index: -1;
 }
 img {
   max-width: 100%;
@@ -74,16 +75,18 @@ img {
 }
 .right-panel {
   position: fixed;
-  right: 0px;
-  width: 50px;
-  height: 80%;
+  bottom: 24px;
+  height: 60px;
+  width: 100%;
+  background-color: black;
 }
 
 .pallete-color {
-  width: 50px;
-  height: 50px;
-  margin: 5px;
+  width: 8%;
+  height: 100%;
+  margin: 1%;
   background-color: white;
+  z-index: 99999999999999;
   float: right;
 
 }

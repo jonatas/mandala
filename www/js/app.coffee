@@ -91,7 +91,7 @@ window.main = ($scope) ->
   $scope.showCurrentMandalaPalette = () ->
     img = $scope.imgMandala($scope.currentMandala)
     return if img is null
-    $scope.currentMandalaPalette = $scope.colorThief.getPalette(img)
+    $scope.currentMandalaPalette = $scope.colorThief.getPalette(img,12)
 
 
 

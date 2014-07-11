@@ -154,7 +154,7 @@
       if (img === null) {
         return;
       }
-      return $scope.currentMandalaPalette = $scope.colorThief.getPalette(img);
+      return $scope.currentMandalaPalette = $scope.colorThief.getPalette(img, 12);
     };
   };
 
