@@ -15,16 +15,6 @@ body {
   height: 100%;
   background-color:black;
 }
-.tools {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  background-color:black;
-  color: green;
-  width: 100%;
-  z-index: 100;
-  margin-bottom: 0px;
-}
 #turn_on_motor{
   float: left;
 }
@@ -75,18 +65,26 @@ img {
 }
 .right-panel {
   position: fixed;
-  bottom: 24px;
-  height: 60px;
+  height: 10%;
   width: 100%;
-  background-color: black;
+  bottom: 0;
+}
+
+.tools {
+  position: fixed;
+  bottom: 10%;
+  left: 0;
+  color: green;
+  width: 100%;
+  z-index: 1;
+  margin-bottom: 0px;
 }
 
 .pallete-color {
   width: 8%;
   height: 100%;
-  margin: 1%;
+  margin: 0.1%;
   background-color: white;
-  z-index: 99999999999999;
-  float: right;
-
+  float: left;
+  z-index: 1;
 }
