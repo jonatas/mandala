@@ -1,22 +1,51 @@
-freq = 440.0
+instrument = "celesta"
+if instrument is "piano"
+  freq = 440.0
+  
+  a = T("sin", freq)
+  b = T("sin", freq * 2, 0.5)
+  c = T("sin", freq * 4, 0.25)
+  d = T("sin", freq * 5, 0.125)
+  
+  frequencyBase = 440
+  frequencyPerStep = 440 / 12
+  freqs = {}
+  freqs[b] = 2
+  freqs[c] = 4
+  freqs[d] = 5
+  window.adsr = T("adsr", "24db", 5, 1000, 0.0, 2500)
+  window.synth = T("*", T("+", a, b, c, d), adsr)
+  window.synth.touchDown = (newFrequency) ->
+    for _synth in [a,b,c,d,synth]
+      multiplier = freqs[_synth] || 1
+      _synth.set(freq: newFrequency * multiplier)
 
-a = T("sin", freq)
-b = T("sin", freq * 2, 0.5)
-c = T("sin", freq * 4, 0.25)
-d = T("sin", freq * 5, 0.125)
+    synth.args[1].bang()
+    this.play()
+  window.synth.touchUp = (fre) ->
+    synth.args[1].keyoff()
 
-frequencyBase = 440
-frequencyPerStep = 440 / 12
-freqs = {}
-freqs[b] = 2
-freqs[c] = 4
-freqs[d] = 5
-window.adsr = T("adsr", "24db", 5, 1000, 0.0, 2500)
-window.synth = T("*", T("+", a, b, c, d), adsr)
-setFreq = (newFrequency) ->
-  for _synth in [a,b,c,d,synth]
-    multiplier = freqs[_synth] || 1
-    _synth.set(freq: newFrequency * multiplier)
+else if instrument is "celesta"
+  freq = 440.0
+  op1 = T("oscx", T("phasor", 200), 0.01).set({fb:0.1})
+  phasor2 = T("phasor", freq)
+  op2 = T("*", T("oscx", T("+", phasor2, op1), 0.4), T("adsr", "32db", 0, 450, 0.4, 500))
+  op3 = T("oscx", T("phasor", freq * 14), 0.1)
+  phasor4 = T("phasor", freq * 2)
+  op4 = T("*", T("oscx", T("+", phasor4, op3), 1.0), T("adsr", "24db", 0, 250, 0.1, 500))
+  window.synth = T("+", op2, op4)
+  window.synth.touchDown = (newFrequency) ->
+    this.pause()
+    phasor2.set(freq: newFrequency)
+    phasor4.set(freq: newFrequency * 2)
+    op2.args[1].bang()
+    op4.args[1].bang()
+    this.play()
+
+  window.synth.touchUp = (fre) ->
+    op2.args[1].keyoff()
+    op4.args[1].keyoff()
+
 
 gid = (name)-> document.getElementById(name)
 window.mandalas =
@@ -115,6 +144,9 @@ window.main = ($scope) ->
     betterNote = null
     diff = {}
     note=1
+    noteC = 65.406
+    pianoNotes = sc.Scale.chromatic().degreeToFreq(sc.Range(12 * 5), noteC)
+    console.log(pianoNotes)
     for rgb in joshnstonMap
       rgb = joshnstonMap[note-1]
       diff[note] = Math.abs(rgb[0] - color[0]) + Math.abs(rgb[1] - color[1]) + Math.abs(rgb[2] - color[2])
@@ -123,14 +155,26 @@ window.main = ($scope) ->
       note  += 1
 
     console.log(color, "currentNote:", betterNote, diff, " diff: ", diff[betterNote])
+    max = (array) ->
+      n = null
+      for m in array
+        if n is null or m > n
+          n = m
+      n
+
+    predominantColor = max(color)
+    console.log("predominantColor", predominantColor)
+    multiplier = Math.round((predominantColor / 255) * 5)
+
     n = diff[betterNote] / 5 #5 scales
     console.log("scale up", n)
-    newFrequency =  Math.abs(betterNote * frequencyPerStep)
- #   newFrequency += Math.abs(Math.round(n)) * frequencyBase
 
-    setFreq(newFrequency)
-    synth.args[1].bang()
-    synth.play()
+    newFrequency =  pianoNotes[(betterNote-1) * multiplier]
+    console.log("newFrequency",newFrequency ,  "note", pianoNotes[(betterNote-1) * multiplier], "multiplier", multiplier)
+
+    synth.touchDown(newFrequency)
+  $scope.touchUp = () ->
+    synth.touchUp()
   $scope.showCurrentMandalaPalette = () ->
     img = $scope.imgMandala($scope.currentMandala)
     return if img is null
