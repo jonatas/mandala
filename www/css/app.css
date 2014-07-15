@@ -81,9 +81,8 @@ img {
 }
 
 .pallete-color {
-  width: 8%;
+  width: 8.33%;
   height: 100%;
-  margin: 0.1%;
   background-color: white;
   float: left;
   z-index: 1;
