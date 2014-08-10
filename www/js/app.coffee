@@ -110,9 +110,6 @@ window.main = ($scope) ->
     noteForBaseColor = $scope.sc.cpsmidi(baseNote[findBetterNoteFor(baseColor)])
     pianoNotes = sc.Scale.chromatic().degreeToFreq(sc.Range(12 * 5), noteC) #ForBaseColor)
 
-    console.log("baseColor: ",baseColor,  [baseColor[0], baseColor[1], baseColor[2]].max())
-
-
     numberOfScales = 5
 
     freqFor = (color) ->
@@ -123,9 +120,8 @@ window.main = ($scope) ->
         predominantColor = color[2]
       multiplier =  parseInt( predominantColor / 255 * numberOfScales)
       betterNote = findBetterNoteFor(color)
-      console.log("predominantColor:: #{predominantColor}","betterNote: #{betterNote} for color: #{color}, multiplier: #{multiplier}, pianoNotes Length: #{pianoNotes.length} [#{ (betterNote-1) * multiplier}]")
+#      console.log("predominantColor:: #{predominantColor}","betterNote: #{betterNote} for color: #{color}, multiplier: #{multiplier}, pianoNotes Length: #{pianoNotes.length} [#{ (betterNote-1) * multiplier}]")
       pianoNotes[(betterNote-1) * multiplier] || pianoNotes[betterNote] || 440
-
 
     colorsPallete = []
     findWithFreq = (freq) ->
@@ -141,4 +137,3 @@ window.main = ($scope) ->
         colorsPallete.push color: color, note: note, freq: freq
 
     $scope.currentMandalaPalette = colorsPallete.sort (a,b) -> if a.note > b.note then 1 else -1
-

@@ -1,6 +1,7 @@
 <html ng-app="mandala-app">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1", minimal-ui />
     <title>Mandalas' panel</title>
   </head>
   <body ng-controller="main">
@@ -16,11 +17,14 @@
     <div class="tools">
       <input type="checkbox" ng-model="turn_on_motor" ng-change="switch_on_off()"/>
        <input type="range" ng-model="accelerator" min="0" max="2000" step="1" value="1804.32" ng-change="accelerate()" />
-       {{velocimeter()}} 
+       {{velocimeter()}}
       <input type="checkbox" ng-model="mute" ng-change="switch_mute()" title="Mute"/>
     </div>
     <div class="right-panel">
-      <div ng-repeat="color in currentMandalaPalette" class="pallete-color" style="background-color: rgb({{color[0]}},{{color[1]}},{{color[2]}})" hm-touch="play(color)" ng-click="touchUp()"></div>
+      <div ng-repeat="opts in currentMandalaPalette" class="pallete-color"
+      style="background-color: rgb({{opts.color[0]}},{{opts.color[1]}},{{opts.color[2]}});width: {{ 100 / currentMandalaPalette.length }}%;"
+      ng-click="play(opts.note)">{{opts.note}} (freq: {{opts.freq}})</div>
+
     </div>
     <div class="mandalas-panel">
       <img ng-repeat="mandala in mandalas" ng-mouseover="showOriginal(this)" ng-mouseout="showInCircle(this)" ng-src="{{mandala}}" class="mandala" />
@@ -28,17 +32,14 @@
     <link rel="stylesheet" href="css/app.css" title="main style" type="css" />
     <script type="text/javascript" charset="utf-8" src="js/angular.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/color-thief.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/timbre.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/gestures.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/subcollider-min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/timbre.js"></script>
+    <script src="js/audio-jsonp.js"></script>
+    <script src="js/jsmad.js"></script>
+    <script src="js/mp3_decode.js"></script>
+    <script src="js/soundfont.js"></script>
+    <!--script type="text/javascript" charset="utf-8" src="js/sf2synth.min.js"></script-->
+    <script type="text/javascript" charset="utf-8" src="js/subcollider.js"></script>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
-    <script type="text/javascript" charset="utf-8">
-      if (window.cordova === undefined){
-        mandalas.onDeviceReady();
-      } else{
-        mandalas.initialize();
-      }
-      </script>
   </body>
 </html>

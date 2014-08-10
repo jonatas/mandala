@@ -148,7 +148,6 @@
       baseColor = $scope.colorThief.getColor(img);
       noteForBaseColor = $scope.sc.cpsmidi(baseNote[findBetterNoteFor(baseColor)]);
       pianoNotes = sc.Scale.chromatic().degreeToFreq(sc.Range(12 * 5), noteC);
-      console.log("baseColor: ", baseColor, [baseColor[0], baseColor[1], baseColor[2]].max());
       numberOfScales = 5;
       freqFor = function(color) {
         var betterNote, multiplier, predominantColor;
@@ -161,7 +160,6 @@
         }
         multiplier = parseInt(predominantColor / 255 * numberOfScales);
         betterNote = findBetterNoteFor(color);
-        console.log("predominantColor:: " + predominantColor, "betterNote: " + betterNote + " for color: " + color + ", multiplier: " + multiplier + ", pianoNotes Length: " + pianoNotes.length + " [" + ((betterNote - 1) * multiplier) + "]");
         return pianoNotes[(betterNote - 1) * multiplier] || pianoNotes[betterNote] || 440;
       };
       colorsPallete = [];
