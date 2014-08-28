@@ -1,0 +1,148 @@
+<html ng-app="mandala-app">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1", minimal-ui />
+    <link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/jan.css" id="theme">
+		<link rel="stylesheet" href="css/slide.css">
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <![endif]-->
+    <title>Mandalas' panel</title>
+  </head>
+  <body ng-controller="Slides">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-47923013-1', 'ideia.me');
+      ga('send', 'pageview');
+    </script>
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <section>
+            <h1>Mandalaterapia</h1>
+            <img src="/mandalas/escaneadas/1/500x500/01b.png" class="medium" />
+            <h3>Jônatas Davi Paganini</h3>
+            <h6>Orientadora: <strong>Cilene Maria Potrich</strong></h6>
+          </section>
+          <section data-markdown>
+            # Justificativa
+
+            * workaholismo
+            * falta de contato
+            * falta de tempo
+            * falta de comprometimento
+          </section>
+          <section data-markdown>
+            # Problemática
+
+            * tecnologia
+            * ubiquidade
+            * estilo de vida
+            * capitalismo e a desconfiguração humana
+          </section>
+          <section data-markdown>
+            # Objetivos
+
+            * eficiência do método
+            * primeiro contato com arteterapia
+            * um método diferente
+          </section>
+          <section data-markdown>
+            # Campo
+
+            * mandala terapia
+            * aplicabilidades
+          </section>
+
+          <section data-markdown>
+            # Estatísticas
+
+            * 9 livros
+            * +- 300 mandalas
+            * n foram pintadas
+            * n ficaram pela metade
+            * n sobraram
+            * n participantes
+            * n cidades
+            * de x até y idade
+            * n profissões
+            * n ocasiões
+          </section>
+          <section data-markdown>
+            # Eficiência
+
+            * n% acreditam na eficiência
+            * n% ficaram neutro
+            * n% não acreditaram
+            * n% não interagiram com as questões
+            * n% indicaram ou falaram para outras pessoas
+          </section>
+          <section data-markdown>
+            # Depoimentos
+
+            * Minha história
+          </section>
+        </section>
+
+        <section ng-repeat="(dir,livro) in livros">
+          <section>
+            <h1>[[livro.nome]]</h1>
+            <img ng-src="[[livro.capa]]" alt="" class="cover" />
+            <p>Editora [[livro.editora.nome]] ([[livro.ano]]).</p>
+            <p>Autor: [[livro.autor]]</p>
+            <p>Contribuintes: [[Object.keys(livro.contribuicoes).length]]</p>
+            <p>Total mandalas pintadas: [[Object.values(livro.contribuicoes).sum()]]</p>
+          </section>
+          <section>
+            <h1>[[livro.nome]]</h1>
+            <img class="thumb" ng-src="[[livro.capa]]" />
+            <p>Editora [[livro.editora.nome]] ([[livro.ano]]).</p>
+            <p>Autor: [[livro.autor]]</p>
+          </section>
+          <section ng-repeat="mandala in livro.mandalas">
+            <img ng-src="[[mandala.src]]"  class="mandala" />
+            <div class="footer">
+              <p>
+                <img class="thumb" ng-src="[[livro.capa]]" />
+                 <div class="label"> [[livro.nome]] - <i>[[livro.autor]]</i></div>
+              </p>
+              <small>Todos os direitos reservados a [[livro.editora.razao_social]] &copy; e [[livro.autor]] &copy;.</small>
+           </div>
+          </section>
+        </section>
+      </div>
+    </div>
+    <script type="text/javascript" charset="utf-8" src="js/angular.js"></script>
+    <script type="text/javascript" charset="utf-8" src="bower_components/color-thief/dist/color-thief.min.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/livros.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/slides.js"></script>
+    <script src="js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script>
+
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+        dependencies: [
+        { src: 'js/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+        });
+
+    </script>
+
+  </body>
+</html>
