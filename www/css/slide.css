@@ -1,0 +1,27 @@
+
+.thumb{
+  position: relative;
+  bottom: 0;
+  height: 128px;
+}
+.label {
+  float: right;
+  font-size: 12px;
+  font-weight: normal;
+}
+.thumb {
+  width: 64px;
+  height: 64px;
+}
+.medium {
+  width: 256px;
+  height: 256px;
+}
+ul > li {
+  margin-top: 50px;
+}
+.cover {
+  width:50%;
+  height:auto;
+  margin-top:40px;
+}
