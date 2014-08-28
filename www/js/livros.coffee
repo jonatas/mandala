@@ -37,6 +37,7 @@ window.Livros =
       PR: ["Francisco Beltrão"]
       SC: ["Florianópolis", "São Miguel do Oeste", "Anchieta"]
       RS: ["Passo Fundo"]
+
   2:
     nome: "Mandalas de bolso 2"
     coloridas: 36
@@ -46,6 +47,7 @@ window.Livros =
     passou_por:
       PR: ["Francisco Beltrão"]
       SC: ["Florianópolis", "São Miguel do Oeste", "Anchieta"]
+
   3:
     nome: "Mandalas de bolso 3"
     coloridas: 31
@@ -79,17 +81,16 @@ window.Livros =
     contribuicoes:
       jonatas: 1
       lorenzo: 1
-      ["iran","aline"]: 3
       iran: 11
       debora: 2
       vanice: 12
       mari: 1
-      ["vanice", "charla"]: 1
       jean: 2
       aline: 8
       eliege: 2
       charla: 1
-
+      "iran, aline": 3
+      "vanice, charla": 1
   5:
     nome: "Mandalas de bolso 12"
     total_mandalas: 44
@@ -107,7 +108,7 @@ window.Livros =
       ana_carla: 1
       julia: 1
       leila: 3
-      ["pablo","cilene"]: 1
+      "pablo, cilene": 1
     autor: "Christian Pilastre"
     ano: 2011
     editora:  Editora.vr
