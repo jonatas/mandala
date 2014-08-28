@@ -1,3 +1,6 @@
+---
+---
+
 gid = (name)-> document.getElementById(name)
 window.app = angular.module("mandala-app", [])
 window.synth = {}
@@ -10,15 +13,30 @@ window.main = ($scope) ->
     if image isnt null
       image.style.webkitAnimation = image.style.mozAnimation = image.style.oAnimation = image.style.animation = actualAnimation
 
+  $scope.instruments =
+    "Acoustic Piano": 0,
+    "Xylophone": 13
+
+  $scope.instrumentCode = $scope.instruments["Acoustic Piano"]
   $scope.sc = sc
-  $scope.livros_a = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
+  $scope.livros =
+    "Mandalas de bolso 1":
+      folder: 1
+      mandalas: 40
+      autor: "Christian Pilastre"
+      ano: 2006
+      editora: "V & R editora"
+    "Mandalas de bolso 2":
+
+
+    a = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]
   $scope.livros_b = [1,2,3,4,5,6,7,8,9]
   $scope.fromRPM = -> (60.0 / $scope.accelerator )
   $scope.mandalas =[]
   for livro in $scope.livros_a
-    $scope.mandalas.push("mandalas/1/500x500/0#{livro}b.png")
+    $scope.mandalas.push("mandalas/1/500x500/0#{livro}.png")
   for livro in $scope.livros_b
-    $scope.mandalas.push("mandalas/2/500x500/0#{livro}b.png")
+    $scope.mandalas.push("mandalas/2/500x500/0#{livro}.png")
 
   $scope.imgMandala = (mandala) ->
     document.querySelector("img[src='#{mandala}']")
@@ -70,13 +88,14 @@ window.main = ($scope) ->
 
   $scope.colorThief = new ColorThief()
   $scope.play = (note) ->
-    T.soundfont.setInstrument(0)
+    T.soundfont.setInstrument($scope.instrumentCode)
     T.soundfont.play(note)
   $scope.stop = (note) ->
     T.soundfont.stop(note)
   $scope.showCurrentMandalaPalette = () ->
     img = $scope.imgMandala($scope.currentMandala)
     return if img is null
+
     joshnstonMap = [   # note: RGB -> #https://github.com/mudcube/MIDI.js/blob/master/js/MusicTheory/Synesthesia.js#L245
       [ 255, 255,   0 ],# C
       [  50,   0, 255 ],# C#
@@ -104,7 +123,7 @@ window.main = ($scope) ->
 
       return betterNote
 
-    noteC =65.406 #261.626#
+    noteC =65.406 #middle C
     baseNote = sc.Scale.chromatic().degreeToFreq(sc.Range(12), noteC)
     baseColor = $scope.colorThief.getColor(img)
     noteForBaseColor = $scope.sc.cpsmidi(baseNote[findBetterNoteFor(baseColor)])
@@ -137,3 +156,4 @@ window.main = ($scope) ->
         colorsPallete.push color: color, note: note, freq: freq
 
     $scope.currentMandalaPalette = colorsPallete.sort (a,b) -> if a.note > b.note then 1 else -1
+

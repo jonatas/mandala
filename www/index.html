@@ -23,7 +23,7 @@
     <div class="right-panel">
       <div ng-repeat="opts in currentMandalaPalette" class="pallete-color"
       style="background-color: rgb({{opts.color[0]}},{{opts.color[1]}},{{opts.color[2]}});width: {{ 100 / currentMandalaPalette.length }}%;"
-      ng-click="play(opts.note)">{{opts.note}} (freq: {{opts.freq}})</div>
+      ng-click="play(opts.note)" ng-touchdown="play(opts.note)">{{opts.note}} (freq: {{opts.freq}})</div>
 
     </div>
     <div class="mandalas-panel">

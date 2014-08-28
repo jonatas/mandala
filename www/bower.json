@@ -1,0 +1,28 @@
+{
+  "name": "mandala",
+  "version": "0.0.0",
+  "homepage": "http://mandala.ideia.me",
+  "authors": [
+    "Jônatas Paganini <jonatasdp@gmail.com>"
+  ],
+  "description": "mandala therapy art panel",
+  "main": "js/app.coffee",
+  "keywords": [
+    "mandala",
+    "art",
+    "art-therapy",
+    "mandala-therapy"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "paper": "~0.9.18"
+  }
+}
