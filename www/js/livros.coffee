@@ -5,6 +5,9 @@ window.Editora =
   vr:
     nome: "V&R editora"
     razao_social: "Vergara & Riba Editora"
+  isis:
+    nome: "Isis"
+    razao_social: "Editora Isis LTDA"
 window.Livros =
   1:
     nome: "Mandalas de bolso 1"
@@ -136,6 +139,63 @@ window.Livros =
       tania: 1
       brunna: 2
       eliege: 1
+
+  7:
+    nome: "A Força das Mandalas"
+    coloridas: 30
+    autor: "Rashe Baguera"
+    ano: 2014
+    editora:  Editora.isis
+    passou_por:
+      PR: ["Francisco Beltrão", "Alagado de Nova Prata do Iguaçu", "Camping do Dário"]
+    abandonadas: 5
+    contribuicoes:
+      clelia: 4
+      mercia: 8
+      edson: 1
+      marco_aurelio: 3
+      eliege: 2
+      vanice: 3
+      mister: 1
+      joyce: 1
+      mozi: 1
+      sem_nome: 1
+      eliege: 1
+      ari: 2
+      tuka: 1
+      "doty, cintia, pati": 1
+  8:
+    nome: "Mandalas da Espiritualidade"
+    coloridas: 1
+    autor: "Magela Borbagatto, Silvia Bigareli e Victor Menezes"
+    ano: 2013
+    editora:  Editora.isis
+    passou_por:
+      PR: ["Francisco Beltrão"]
+      SC: ["Chapecó"]
+    contribuicoes:
+      sem_nome: 1
+  9:
+    nome: "Mandalas Mágicas 1"
+    coloridas: 9
+    autor: "Magela Borbagatto, Silvia Bigareli e Victor Menezes"
+    ano: 2013
+    editora:  Editora.isis
+    passou_por:
+      PR: ["Francisco Beltrão"]
+      SC: ["Chapecó"]
+    contribuicoes:
+      jonatas: 1
+      tania: 1
+      daiana: 1
+      lauana: 1
+      adriane: 1
+      aglair: 1
+      simone: 1
+      claudia: 1
+      arlete: 1
+
+
 
 
 
