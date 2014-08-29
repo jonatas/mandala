@@ -24,9 +24,9 @@ window.main = ($scope) ->
   $scope.fromRPM = -> (60.0 / $scope.accelerator )
   $scope.mandalas =[]
   for livro in $scope.livros_a
-    $scope.mandalas.push("mandalas/1/500x500/0#{livro}b.png")
+    $scope.mandalas.push("mandalas/escaneadas/1/500x500/0#{livro}b.png")
   for livro in $scope.livros_b
-    $scope.mandalas.push("mandalas/2/500x500/0#{livro}b.png")
+    $scope.mandalas.push("mandalas/escaneadas/2/500x500/0#{livro}b.png")
 
   $scope.imgMandala = (mandala) ->
     document.querySelector("img[src='#{mandala}']")

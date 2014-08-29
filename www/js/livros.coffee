@@ -53,6 +53,15 @@ window.Livros =
     passou_por:
       PR: ["Francisco Beltrão"]
       SC: ["Florianópolis", "São Miguel do Oeste", "Anchieta"]
+    contribuicoes:
+      jonatas: 21
+      tania: 4
+      priscila: 2
+      eliege: 4
+      mercia: 2
+      marlon: 1
+      josi: 1
+      vini: 1
 
   3:
     nome: "Mandalas de bolso 3"
@@ -150,7 +159,7 @@ window.Livros =
     ano: 2014
     editora:  Editora.isis
     passou_por:
-      PR: ["Francisco Beltrão", "Alagado de Nova Prata do Iguaçu", "Camping do Dário"]
+      PR: ["Francisco Beltrão", "Alagado de Nova Prata do Iguaçu"]
     abandonadas: 5
     contribuicoes:
       clelia: 4
