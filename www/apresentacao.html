@@ -4,11 +4,12 @@
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1", minimal-ui />
     <link rel="stylesheet" href="css/reveal.min.css">
 		<link rel="stylesheet" href="css/theme/jan.css" id="theme">
+    <link href="js/nvd3/nv.d3.css" rel="stylesheet" type="text/css">
 		<link rel="stylesheet" href="css/slide.css">
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <![endif]-->
-    <title>Mandalas' panel</title>
+    <title>Mandalaterapia - UNOESC</title>
   </head>
   <body ng-controller="Slides">
     <script>
@@ -59,22 +60,35 @@
             * mandala terapia
             * aplicabilidades
           </section>
-
+        </section>
+        <section>
           <section data-markdown>
             # Estatísticas
 
-            * 9 livros
-            * +- 300 mandalas
-            * n foram pintadas
-            * n ficaram pela metade
-            * n sobraram
-            * n participantes
-            * n cidades
-            * de x até y idade
-            * n profissões
-            * n ocasiões
+            * [[ total.livros ]] livros
+            * [[ total.mandalas ]] mandalas
+            * [[ total.abandonadas ]] foram abandonadas
+            * [[ total.sem_nome]] sem nome
+            * [[ total.pessoas ]] pessoas
+            * [[ total.cidades ]] cidades e [[ total.estados ]] estados
           </section>
-          <section data-markdown>
+          <section>
+            <h2>Mandalas por livro</h2>
+            <svg id="mandalas_por_livro"></svg>
+          </section>
+          <section>
+            <h2>Livros por cidade</h2>
+            <svg id="livros_por_cidade"></svg>
+          </section>
+          <section>
+            <h2>Livros por estado</h2>
+            <svg id="livros_por_estado"></svg>
+          </section>
+          <section>
+            <h2>Mandalas por pessoa</h2>
+            <svg id="mandalas_por_pessoa"></svg>
+          </section>
+          <!--section data-markdown>
             # Eficiência
 
             * n% acreditam na eficiência
@@ -82,11 +96,13 @@
             * n% não acreditaram
             * n% não interagiram com as questões
             * n% indicaram ou falaram para outras pessoas
-          </section>
+          </section-->
           <section data-markdown>
             # Depoimentos
 
             * Minha história
+            * A história da Mari
+            * Depoimento da K.C.
           </section>
         </section>
 
@@ -111,9 +127,23 @@
               <p>
                 <div class="label">[[livro.nome]] - <i>[[livro.autor]]</i></div>
                 <img class="thumb" ng-src="[[livro.capa]]" />
-              <small>Todos os direitos reservados a [[livro.editora.razao_social]] &copy; e [[livro.autor]] &copy;.</small>
+                <small>Todos os direitos reservados a [[livro.editora.razao_social]] &copy; e [[livro.autor]] &copy;.</small>
               </p>
-           </div>
+            </div>
+          </section>
+        </section>
+        <section>
+          <section data-markdown>
+            # Obrigado
+
+            --
+
+            Jônatas Davi Paganini
+
+            [jonatasdp@gmail.com](mailto:jonatasdp@gmail.com)
+
+            [ideia.me](http://ideia.me) | [invent.to](http://invent.to)
+            
           </section>
         </section>
       </div>
@@ -121,13 +151,16 @@
     <script type="text/javascript" charset="utf-8" src="js/angular.js"></script>
     <script type="text/javascript" charset="utf-8" src="bower_components/color-thief/dist/color-thief.min.js"></script>
     <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/livros.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/slides.js"></script>
     <script src="js/head.min.js"></script>
     <script src="js/reveal.js"></script>
     <script src="js/jquery-1.9.1.min.js"></script>
-    <script>
-
+    <script src="js/nvd3/lib/d3.v3.js"></script>
+    <script src="js/nvd3/nv.d3.js"></script>
+    <script src="js/nvd3/src/models/legend.js"></script>
+    <script src="js/nvd3/src/models/pie.js"></script>
+    <script src="js/nvd3/src/models/pieChart.js"></script>
+    <script src="js/nvd3/src/utils.js"></script>
+    <script type="text/javascript" charset="utf-8">
       Reveal.initialize({
         controls: true,
         progress: true,
@@ -136,13 +169,13 @@
         theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
         transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
         dependencies: [
-        { src: 'js/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-        { src: 'js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-        { src: 'js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }
+          { src: 'js/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }
         ]
-        });
-
-    </script>
-
+     });
+     </script>
+    <script type="text/javascript" charset="utf-8" src="js/livros.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/slides.js"></script>
   </body>
 </html>

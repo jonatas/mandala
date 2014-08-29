@@ -1,6 +1,7 @@
 ---
 ---
 
+window.Mandalas = []
 window.Editora =
   vr:
     nome: "V&R editora"
@@ -8,10 +9,11 @@ window.Editora =
   isis:
     nome: "Isis"
     razao_social: "Editora Isis LTDA"
+
 window.Livros =
-  1:
+  "1":
     nome: "Mandalas de bolso 1"
-    total_mandalas: 44
+    total_mandalas: 41
     coloridas: 41
     abandonadas: 1
     contribuicoes:
@@ -41,17 +43,18 @@ window.Livros =
       SC: ["Florianópolis", "São Miguel do Oeste", "Anchieta"]
       RS: ["Passo Fundo"]
 
-  2:
+  "2":
     nome: "Mandalas de bolso 2"
     coloridas: 36
     autor: "Marie Pré"
     ano: 2008
+    abandonadas: 0
     editora:  Editora.vr
     passou_por:
       PR: ["Francisco Beltrão"]
       SC: ["Florianópolis", "São Miguel do Oeste", "Anchieta"]
 
-  3:
+  "3":
     nome: "Mandalas de bolso 3"
     coloridas: 31
     autor: "Françoise Rougeau"
@@ -72,9 +75,9 @@ window.Livros =
       ari: 1
       marco: 2
 
-  4:
+  "4":
     nome: "Mandalas de bolso 10"
-    coloridas: 25
+    coloridas: 46
     autor: "Glória Falcón"
     ano: 2009
     editora:  Editora.vr
@@ -94,10 +97,10 @@ window.Livros =
       charla: 1
       "iran, aline": 3
       "vanice, charla": 1
-  5:
+  "5":
     nome: "Mandalas de bolso 12"
     total_mandalas: 44
-    coloridas: 18
+    coloridas: 25
     abandonadas: 2
     contribuicoes:
       cilene: 10
@@ -120,9 +123,9 @@ window.Livros =
       SP: ["Porangaba"]
       RS: ["Passo Fundo", "Palmeiras das Missões", "Porto Alegre", "Sarandi", "Carazinho"]
 
-  6:
+  "6":
     nome: "Mandalas de bolso 6 - Modernistas"
-    coloridas: 46 
+    coloridas: 18
     autor: "Montserrat Vidal"
     ano: 2009
     editora:  Editora.vr
@@ -140,7 +143,7 @@ window.Livros =
       brunna: 2
       eliege: 1
 
-  7:
+  "7":
     nome: "A Força das Mandalas"
     coloridas: 30
     autor: "Rashe Baguera"
@@ -164,7 +167,7 @@ window.Livros =
       ari: 2
       tuka: 1
       "doty, cintia, pati": 1
-  8:
+  "8":
     nome: "Mandalas da Espiritualidade"
     coloridas: 1
     autor: "Magela Borbagatto, Silvia Bigareli e Victor Menezes"
@@ -175,7 +178,7 @@ window.Livros =
       SC: ["Chapecó"]
     contribuicoes:
       sem_nome: 1
-  9:
+  "9":
     nome: "Mandalas Mágicas 1"
     coloridas: 9
     autor: "Magela Borbagatto, Silvia Bigareli e Victor Menezes"
@@ -195,7 +198,60 @@ window.Livros =
       claudia: 1
       arlete: 1
 
+window.Pessoa = {}
+window.Cidade = {}
+window.Estado = {}
+for dir, livro of Livros
+  livro.mandalas = []
+  livro.capa = 'mandalas/'+dir+'/capa.jpg'
+  while livro.mandalas.length < livro.coloridas
+    number = livro.mandalas.length + 1
+    src = "mandalas/#{dir}/#{number}.jpg"
+    livro.mandalas.push src: src, number: number
+    Mandalas.push(src)
 
+  for pessoa, quantidade of livro.contribuicoes
+    if not Pessoa[pessoa]
+      Pessoa[pessoa] = quantidade
+    else
+      Pessoa[pessoa] += quantidade
 
+  for estado, cidades of livro.passou_por
+    if not Estado[estado]
+      Estado[estado] = 1
+    else
+      Estado[estado] += 1
+    for cidade in cidades
+      if not Cidade[cidade] 
+        Cidade[cidade] = 1
+      else
+        Cidade[cidade] += 1
 
+window.Estatisticas =
+  mandalas_por:
+    livro: ->
+      for id, livro of Livros
+        livro: livro.nome, mandalas: livro.coloridas
+    pessoa: ->
+      for pessoa, contribuicoes of Pessoa
+        pessoa: pessoa, mandalas: contribuicoes
 
+    cidade: ->
+      for cidade, livros of Cidade
+        cidade: cidade, livros: livros
+
+    estado: ->
+      for estado, livros of Estado
+        estado: estado, livros: livros
+  total:
+    mandalas: Mandalas.length
+    livros: Object.keys(Livros).length
+    pessoas: Object.keys(Pessoa).length
+    cidades: Object.keys(Cidade).length
+    estados: Object.keys(Estado).length
+    sem_nome: Pessoa["sem_nome"]
+    abandonadas: (->
+      total_abandonadas = 0
+      for id, livro of Livros
+        total_abandonadas += livro.abandonadas if livro.abandonadas
+      total_abandonadas)()
