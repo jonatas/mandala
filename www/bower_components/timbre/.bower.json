@@ -1,0 +1,14 @@
+{
+  "name": "timbre",
+  "homepage": "https://github.com/mohayonao/timbre.js",
+  "_release": "9a6721ecfb",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "9a6721ecfb8971fc04222adf143251ab7f0f28f2"
+  },
+  "_source": "git://github.com/mohayonao/timbre.js.git",
+  "_target": "*",
+  "_originalSource": "timbre",
+  "_direct": true
+}
