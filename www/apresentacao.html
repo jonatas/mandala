@@ -26,10 +26,11 @@
       <div class="slides">
         <section>
           <section>
-            <h1>Mandalaterapia</h1>
-            <img src="/mandalas/escaneadas/1/500x500/01b.png" class="medium" />
-            <h3>Jônatas Davi Paganini</h3>
+            <h2>Mandalaterapia</h2>
+            <img src="/mandalas/icon.png" class="medium" />
+            <h4>Jônatas Davi Paganini</h4>
             <h6>Orientadora: <strong>Cilene Maria Potrich</strong></h6>
+            <small>UNOESC - Pós graduação <i>Latu sensu</i> em <strong>Arteterapia, educação e saúde</strong>.</small>
           </section>
           <section data-markdown>
             # Justificativa
@@ -55,10 +56,27 @@
             * um método diferente
           </section>
           <section data-markdown>
-            # Campo
+            # A mandala
 
-            * mandala terapia
-            * aplicabilidades
+            * história
+             * arte
+             * cultura
+             * religião
+             * horticultura
+            * ferramenta para instrospecção
+            * ponte para o EU
+          </section>
+          <section data-markdown>
+            # O projeto
+
+            * para pintar e apreciar
+            * para passar para alguém querido fazer a mesma coisa
+            * a terapia é livre
+             * livre do terapêuta
+             * livre de horário
+             * livre de espaço
+             * livre do tempo ou período para término
+             * livre para escolher cores
           </section>
         </section>
         <section>
@@ -70,56 +88,61 @@
             * [[ total.abandonadas ]] foram abandonadas
             * [[ total.sem_nome]] sem nome
             * [[ total.pessoas ]] pessoas
-            * [[ total.cidades ]] cidades e [[ total.estados ]] estados
+            * [[ total.cidades ]] cidades em [[ total.estados ]] estados
           </section>
           <section>
-            <h2>Mandalas por livro</h2>
+            <h2>Livro mais pintado</h2>
             <svg id="mandalas_por_livro"></svg>
           </section>
           <section>
-            <h2>Livros por cidade</h2>
+            <h2>Livro por cidade</h2>
             <svg id="livros_por_cidade"></svg>
           </section>
           <section>
-            <h2>Livros por estado</h2>
+            <h2>Livro por estado</h2>
             <svg id="livros_por_estado"></svg>
           </section>
           <section>
-            <h2>Mandalas por pessoa</h2>
+            <h2>Mandaleiros de plantão</h2>
             <svg id="mandalas_por_pessoa"></svg>
           </section>
-          <!--section data-markdown>
-            # Eficiência
-
-            * n% acreditam na eficiência
-            * n% ficaram neutro
-            * n% não acreditaram
-            * n% não interagiram com as questões
-            * n% indicaram ou falaram para outras pessoas
-          </section-->
+        </section>
+        <section>
           <section data-markdown>
             # Depoimentos
 
             * Minha história
-            * A história da Mari
             * Depoimento da K.C.
+            * A história da Mari
+          </section>
+          <section>
+            <h2>Minha historia</h2>
+            <img ng-src="[[ livros[1].mandalas[13].src ]]" alt="" class="cover" />
+          </section>
+          <section>
+            <h2>Depoimento da K.C.</h2>
+            <img src="/mandalas/k.c.jpg" class="cover" />
+          </section>
+          <section>
+            <h2>Depoimento da Mari?</h2>
+            <img src="/mandalas/k.c.2.jpg" class="cover" />
           </section>
         </section>
 
         <section ng-repeat="(dir,livro) in livros">
           <section>
-            <h1>[[livro.nome]]</h1>
+            <h2>[[livro.nome]]</h2>
             <img ng-src="[[livro.capa]]" alt="" class="cover" />
             <p>Editora [[livro.editora.nome]] ([[livro.ano]]).</p>
             <p>Autor: [[livro.autor]]</p>
-            <p>Contribuintes: [[Object.keys(livro.contribuicoes).length]]</p>
-            <p>Total mandalas pintadas: [[Object.values(livro.contribuicoes).sum()]]</p>
           </section>
           <section>
-            <h1>[[livro.nome]]</h1>
+            <h2>[[livro.nome]]</h2>
             <img class="thumb" ng-src="[[livro.capa]]" />
-            <p>Editora [[livro.editora.nome]] ([[livro.ano]]).</p>
-            <p>Autor: [[livro.autor]]</p>
+            <p>
+              <small>Todos os direitos reservados a [[livro.editora.razao_social]] &copy; e [[livro.autor]] &copy;.</small>
+            </p>
+            <p>Esse livro passou por [[livro.estados]] estados e [[livro.cidades]] cidades e [[livro.pessoas]] pessoas pintaram [[livro.mandalas.length]] mandalas deste livro.</p>
           </section>
           <section ng-repeat="mandala in livro.mandalas">
             <img ng-src="[[mandala.src]]"  class="mandala" />
@@ -127,7 +150,6 @@
               <p>
                 <div class="label">[[livro.nome]] - <i>[[livro.autor]]</i></div>
                 <img class="thumb" ng-src="[[livro.capa]]" />
-                <small>Todos os direitos reservados a [[livro.editora.razao_social]] &copy; e [[livro.autor]] &copy;.</small>
               </p>
             </div>
           </section>

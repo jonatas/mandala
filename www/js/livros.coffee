@@ -11,7 +11,7 @@ window.Editora =
     razao_social: "Editora Isis LTDA"
 
 window.Livros =
-  "1":
+  1:
     nome: "Mandalas de bolso 1"
     total_mandalas: 41
     coloridas: 41
@@ -43,7 +43,7 @@ window.Livros =
       SC: ["Florianópolis", "São Miguel do Oeste", "Anchieta"]
       RS: ["Passo Fundo"]
 
-  "2":
+  2:
     nome: "Mandalas de bolso 2"
     coloridas: 36
     autor: "Marie Pré"
@@ -54,7 +54,7 @@ window.Livros =
       PR: ["Francisco Beltrão"]
       SC: ["Florianópolis", "São Miguel do Oeste", "Anchieta"]
 
-  "3":
+  3:
     nome: "Mandalas de bolso 3"
     coloridas: 31
     autor: "Françoise Rougeau"
@@ -75,7 +75,7 @@ window.Livros =
       ari: 1
       marco: 2
 
-  "4":
+  4:
     nome: "Mandalas de bolso 10"
     coloridas: 46
     autor: "Glória Falcón"
@@ -97,7 +97,7 @@ window.Livros =
       charla: 1
       "iran, aline": 3
       "vanice, charla": 1
-  "5":
+  5:
     nome: "Mandalas de bolso 12"
     total_mandalas: 44
     coloridas: 25
@@ -123,7 +123,7 @@ window.Livros =
       SP: ["Porangaba"]
       RS: ["Passo Fundo", "Palmeiras das Missões", "Porto Alegre", "Sarandi", "Carazinho"]
 
-  "6":
+  6:
     nome: "Mandalas de bolso 6 - Modernistas"
     coloridas: 18
     autor: "Montserrat Vidal"
@@ -143,7 +143,7 @@ window.Livros =
       brunna: 2
       eliege: 1
 
-  "7":
+  7:
     nome: "A Força das Mandalas"
     coloridas: 30
     autor: "Rashe Baguera"
@@ -167,7 +167,7 @@ window.Livros =
       ari: 2
       tuka: 1
       "doty, cintia, pati": 1
-  "8":
+  8:
     nome: "Mandalas da Espiritualidade"
     coloridas: 1
     autor: "Magela Borbagatto, Silvia Bigareli e Victor Menezes"
@@ -178,7 +178,7 @@ window.Livros =
       SC: ["Chapecó"]
     contribuicoes:
       sem_nome: 1
-  "9":
+  9:
     nome: "Mandalas Mágicas 1"
     coloridas: 9
     autor: "Magela Borbagatto, Silvia Bigareli e Victor Menezes"
@@ -204,6 +204,10 @@ window.Estado = {}
 for dir, livro of Livros
   livro.mandalas = []
   livro.capa = 'mandalas/'+dir+'/capa.jpg'
+  livro.pessoas = if livro.contribuicoes then Object.keys(livro.contribuicoes).length else 0
+  livro.estados=  Object.keys(livro.passou_por).length
+  livro.cidades=0
+  livro.cidades += cidades.length for estado, cidades of livro.passou_por
   while livro.mandalas.length < livro.coloridas
     number = livro.mandalas.length + 1
     src = "mandalas/#{dir}/#{number}.jpg"
