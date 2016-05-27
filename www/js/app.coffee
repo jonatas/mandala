@@ -1,17 +1,18 @@
----
----
 
 gid = (name)-> document.getElementById(name)
 window.app = angular.module("mandala-app", [])
+
+app.directive 'imageonload', ->
+  restrict: 'A',
+  link: (scope, element, attrs) ->
+    element.bind 'load', -> scope.$apply(attrs.imageonload)
 window.synth = {}
 window.main = ($scope) ->
   setAnimationState = (image, state) ->
-    if image isnt null
-      image.style.webkitAnimationPlayState = image.style.mozAnimationPlayState = image.style.oAnimationPlayState = image.style.animationPlayState = state
+     $scope.imgMandala().style.webkitAnimationPlayState = image.style.mozAnimationPlayState = image.style.oAnimationPlayState = image.style.animationPlayState = state
 
   setAnimation = (image, actualAnimation) ->
-    if image isnt null
-      image.style.webkitAnimation = image.style.mozAnimation = image.style.oAnimation = image.style.animation = actualAnimation
+     $scope.imgMandala().style.webkitAnimation = image.style.mozAnimation = image.style.oAnimation = image.style.animation = actualAnimation
 
   $scope.instruments =
     "Acoustic Piano": 0,
@@ -19,46 +20,44 @@ window.main = ($scope) ->
 
   $scope.instrumentCode = $scope.instruments["Acoustic Piano"]
   $scope.sc = sc
-  $scope.livros_a = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]
-  $scope.livros_b = [1,2,3,4,5,6,7,8,9]
+  $scope.books = [[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27], [1,2,3,4,5,6,7,8,9]]
   $scope.fromRPM = -> (60.0 / $scope.accelerator )
-  $scope.mandalas =[]
-  for livro in $scope.livros_a
-    $scope.mandalas.push("mandalas/escaneadas/1/500x500/0#{livro}b.png")
-  for livro in $scope.livros_b
-    $scope.mandalas.push("mandalas/escaneadas/2/500x500/0#{livro}b.png")
+  $scope.mandalaIndex = 0
+  $scope.booksIndex = 0
+  $scope.mandalaSrc = -> "/img/mandalas/escaneadas/1/500x500/0#{$scope.books[$scope.booksIndex][$scope.mandalaIndex]}b.png"
+  $scope.imgMandala =  ->
+    document.querySelector("img.mandala")
+  $scope.mandalaRefresh = ->
+    $scope.currentMandala = $scope.mandalaSrc()
 
-  $scope.imgMandala = (mandala) ->
-    document.querySelector("img[src='#{mandala}']")
 
-  $scope.imgMandalas = ->
-    $scope.imgMandala(mandala) for mandala in $scope.mandalas
+
+  $scope.nextMandala = -> 
+    $scope.mandalaIndex++ if $scope.mandalaIndex < $scope.books[$scope.booksIndex].length
+    $scope.mandalaRefresh()
+  $scope.previousMandala = -> 
+    $scope.mandalaIndex-- if $scope.mandalaIndex > 0
+    $scope.mandalaRefresh()
 
 
   $scope.velocimeter = -> "#{$scope.accelerator} RPM"
   $scope.accelerate = ->
-    for mandala in $scope.imgMandalas()
-      setAnimation(mandala, "") if mandala isnt null
+    setAnimation($scope.currentMandala, "") if $scope.currentMandala isnt null
 
     newAnimation = ->
       actualAnimation = "rotation #{ $scope.fromRPM()}s infinite linear"
-      for mandala in $scope.imgMandalas()
-        setAnimation(mandala, actualAnimation)
+      setAnimation($scope.currentMandala, actualAnimation)
     setTimeout(newAnimation, 200)
 
     if not $scope.turn_on_motor
       $scope.turn_on_motor = true
 
-
   $scope.showOriginal = (element) ->
     if not $scope.turn_on_motor
-      if $scope.currentMandala is null or $scope.currentMandala isnt element.mandala
-        $scope.currentMandala = element.mandala
-        $scope.showCurrentMandalaPalette()
-        element.mandala = element.mandala.replace("b.png", ".png")
+      $scope.currentMandala = $scope.currentMandala.replace("b.png", ".png")
   $scope.showInCircle = (element) ->
     if not $scope.turn_on_motor
-      element.mandala = element.mandala.replace(".png", "b.png")
+      $scope.currentMandala = $scope.currentMandala.replace(".png", "b.png").replace("bb.png", "b.png")
 
   $scope.switch_on_off = ->
     if $scope.turn_on_motor
@@ -66,9 +65,7 @@ window.main = ($scope) ->
     else
       state = "paused"
 
-
-    for image in $scope.imgMandalas()
-      setAnimationState(image, state)
+    setAnimationState($scope.currentMandala, state)
 
   $scope.turn_on_motor = false
   $scope.accelerator = 0
@@ -83,8 +80,8 @@ window.main = ($scope) ->
   $scope.stop = (note) ->
     T.soundfont.stop(note)
   $scope.showCurrentMandalaPalette = () ->
-    img = $scope.imgMandala($scope.currentMandala)
-    return if img is null
+    img = $scope.imgMandala()
+    return unless img?
 
     joshnstonMap = [   # note: RGB -> #https://github.com/mudcube/MIDI.js/blob/master/js/MusicTheory/Synesthesia.js#L245
       [ 255, 255,   0 ],# C
@@ -147,3 +144,4 @@ window.main = ($scope) ->
 
     $scope.currentMandalaPalette = colorsPallete.sort (a,b) -> if a.note > b.note then 1 else -1
 
+  $scope.mandalaRefresh()
