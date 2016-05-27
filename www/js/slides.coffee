@@ -1,5 +1,3 @@
----
----
 
 window.app = angular.module("mandala-app", []).
   config(($interpolateProvider) -> $interpolateProvider.startSymbol('[[').endSymbol(']]')).

@@ -1,5 +1,3 @@
----
----
 
 window.Mandalas = []
 window.Editora =
