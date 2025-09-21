@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Mandala Synth</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: white;
+        }
+
+        .mandala-viewer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .mandala-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .mandala-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.1s ease;
+        }
+
+        .mandala-image.rotating {
+            animation: rotate linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .spiral-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .pixel-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ff6b6b 0%, #ff4757 50%, #ff3742 100%);
+            border: 3px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.9), inset 0 0 5px rgba(255, 255, 255, 0.3);
+            transition: all 0.1s ease;
+        }
+
+        .pixel-marker.disk {
+            width: 30px;
+            height: 30px;
+            background: conic-gradient(from 0deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #ff6b6b);
+            animation: diskRotate 2s linear infinite;
+        }
+
+        .pixel-marker.disk.beat {
+            animation: diskRotate 2s linear infinite, beatPulse 0.2s ease-out;
+        }
+
+        @keyframes diskRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes beatPulse {
+            0% { 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 20px rgba(255, 107, 107, 0.9);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.3);
+                box-shadow: 0 0 30px rgba(255, 107, 107, 1);
+            }
+            100% { 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 20px rgba(255, 107, 107, 0.9);
+            }
+        }
+
+        .magnifier {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 4px solid #fff;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(2px);
+            display: none;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            /* Fixed vertical position, starts from center horizontally */
+            top: 140px; /* Center vertically (200px - 60px to account for magnifier center) */
+            left: 140px; /* Start from center horizontally (200px - 60px) */
+            transition: left 0.3s ease;
+        }
+
+        .magnifier-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 80px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .magnifier-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .disco-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 107, 107, 0.3) 10%, 
+                rgba(255, 107, 107, 0.8) 50%, 
+                rgba(255, 107, 107, 0.3) 90%, 
+                transparent 100%);
+            transform: translateY(-50%);
+            display: none;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .controls .control-group:nth-child(5) {
+            grid-column: 1 / -1;
+        }
+
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        .settings-panel h3 {
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .instrument-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .instrument-option {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .instrument-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .instrument-option.active {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border-color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .control-group button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .control-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .navigation {
+            display: flex;
+            gap: 10px;
+            grid-column: 1 / -1;
+        }
+
+        .navigation button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .navigation button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .color-palette {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .color-palette h3 {
+            color: white;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .keyboard-hint {
+            text-align: center;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+        }
+
+        .palette-colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 10px;
+        }
+
+        .palette-color {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            font-size: 12px;
+            position: relative;
+        }
+
+        .palette-color:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .note-label {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .key-label {
+            font-size: 9px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1px 4px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            min-width: 12px;
+            text-align: center;
+        }
+
+        .spiral-canvas {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .spiral-canvas h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .spiral-canvas canvas {
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .status {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto auto;
+            }
+            
+            .mandala-container {
+                width: 300px;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Modern Mandala Synth</h1>
+            <p>Interactive Audio-Visual Mandala Experience</p>
+        </header>
+
+        <main class="mandala-viewer">
+            <div class="mandala-container">
+                <img class="mandala-image" id="mandalaImage" alt="Mandala" crossorigin="anonymous">
+                <div class="spiral-overlay">
+                    <div class="pixel-marker" id="pixelMarker" style="display: none;"></div>
+                    <div class="disco-track" id="discoTrack"></div>
+                    <div class="magnifier" id="magnifier">
+                        <div class="magnifier-content">
+                            <canvas class="magnifier-canvas" id="magnifierCanvas" width="80" height="80"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label for="rotationSpeed">Rotation Speed (RPM)</label>
+                    <input type="range" id="rotationSpeed" min="0" max="300" value="0" step="1">
+                    <span class="status" id="rpmDisplay">0 RPM</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="spiralSpeed">Spiral Speed</label>
+                    <input type="range" id="spiralSpeed" min="0" max="100" value="0" step="1">
+                    <span class="status" id="spiralStatus">Stopped</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="spiralAngle">Spiral Angle</label>
+                    <input type="range" id="spiralAngle" min="0" max="360" value="30" step="1">
+                    <span class="status" id="angleDisplay">30°</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="bpmControl">BPM (Beat Timing)</label>
+                    <input type="range" id="bpmControl" min="30" max="999" value="120" step="10">
+                    <span class="status" id="bpmDisplay">120 BPM</span>
+                </div>
+
+                <div class="control-group">
+                    <button id="playPauseSpiral">Play Spiral</button>
+                    <button id="extractPalette">Extract Palette</button>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button id="prevMandala">← Previous</button>
+                <button id="nextMandala">Next →</button>
+                <button id="randomMandala">Random</button>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="settings-panel">
+                <h3>⚙️ Settings</h3>
+                <div class="instrument-selector" id="instrumentSelector">
+                    <div class="instrument-option" data-instrument="synth">🎹 Synth</div>
+                    <div class="instrument-option active" data-instrument="piano">🎼 Piano</div>
+                    <div class="instrument-option" data-instrument="bells">🔔 Bells</div>
+                    <div class="instrument-option" data-instrument="pluck">🎸 Pluck</div>
+                    <div class="instrument-option" data-instrument="organ">🎵 Organ</div>
+                </div>
+            </div>
+
+            <div class="color-palette">
+                <h3>Color Palette</h3>
+                <div class="keyboard-hint">
+                    <small>🎹 Press A S D F G H J K L to play colors</small>
+                </div>
+                <div class="palette-colors" id="paletteColors">
+                    <div class="status">Extract palette to see colors</div>
+                </div>
+            </div>
+
+            <div class="spiral-canvas">
+                <h3>Spiral View</h3>
+                <canvas id="spiralCanvas" width="260" height="200"></canvas>
+                <div class="status" id="spiralInfo">Start spiral to see visualization</div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+
+    <script>
+        class ModernMandalaApp {
+            constructor() {
+                this.mandalaIndex = 0;
+                this.bookIndex = 0;
+                this.mandalas = this.generateMandalaList();
+                this.colorThief = new ColorThief();
+                this.currentPalette = [];
+                this.isRotating = false;
+                this.isSpiralPlaying = false;
+                this.spiralPosition = { angle: 0, radius: 0 };
+                this.animationFrame = null;
+                this.currentInstrument = 'piano';
+                this.synths = {};
+                this.magnifierPosition = 0;
+                this.lastBeatTime = 0;
+                this.bpm = 120;
+                this.staticMandalaCanvas = null;
+                this.staticMandalaCtx = null;
+                this.magnifierStartTime = 0;
+                this.magnifierDuration = 120000; // 2 minutes in milliseconds
+                
+                // Audio setup
+                this.setupAudio();
+                
+                // Initialize UI
+                this.initializeElements();
+                this.bindEvents();
+                this.loadCurrentMandala();
+            }
+
+            generateMandalaList() {
+                const books = [
+                    { index: 1, count: 41 },
+                    { index: 2, count: 36 },
+                    { index: 3, count: 33 },
+                    { index: 4, count: 47 },
+                    { index: 5, count: 25 },
+                    { index: 6, count: 20 },
+                    { index: 7, count: 31 },
+                    { index: 8, count: 2 },
+                    { index: 9, count: 10 }
+                ];
+
+                const mandalas = [];
+                books.forEach(book => {
+                    for (let i = 1; i <= book.count; i++) {
+                        // Use the cropped circular versions from escaneadas folder for book 1
+                        if (book.index === 1) {
+                            const paddedNumber = i.toString().padStart(2, '0');
+                            mandalas.push({
+                                book: book.index,
+                                number: i,
+                                path: `img/mandalas/escaneadas/1/500x500/${paddedNumber}b.png`
+                            });
+                        } else {
+                            mandalas.push({
+                                book: book.index,
+                                number: i,
+                                path: `img/mandalas/${book.index}/${i}.jpg`
+                            });
+                        }
+                    }
+                });
+                return mandalas;
+            }
+
+            async setupAudio() {
+                // Create multiple synthesizers for different instruments
+                this.synths = {
+                    synth: new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "triangle" },
+                        envelope: { attack: 0.1, decay: 0.3, sustain: 0.3, release: 1 }
+                    }).toDestination(),
+                    
+                    piano: new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "sine" },
+                        envelope: { attack: 0.02, decay: 0.1, sustain: 0.3, release: 2 }
+                    }).toDestination(),
+                    
+                    bells: new Tone.MetalSynth({
+                        frequency: 200,
+                        envelope: { attack: 0.001, decay: 1.4, sustain: 0.1, release: 1.4 },
+                        harmonicity: 5.1,
+                        modulationIndex: 32,
+                        resonance: 4000,
+                        octaves: 1.5
+                    }).toDestination(),
+                    
+                    pluck: new Tone.PluckSynth({
+                        attackNoise: 1,
+                        dampening: 4000,
+                        resonance: 0.7
+                    }).toDestination(),
+                    
+                    organ: new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "square" },
+                        envelope: { attack: 0.1, decay: 0.1, sustain: 0.9, release: 0.1 }
+                    }).toDestination()
+                };
+                
+                this.synth = this.synths[this.currentInstrument];
+
+                // Enable audio context on user interaction
+                document.addEventListener('click', async () => {
+                    if (Tone.context.state !== 'running') {
+                        await Tone.start();
+                    }
+                }, { once: true });
+            }
+
+            initializeElements() {
+                this.elements = {
+                    mandalaImage: document.getElementById('mandalaImage'),
+                    rotationSpeed: document.getElementById('rotationSpeed'),
+                    spiralSpeed: document.getElementById('spiralSpeed'),
+                    spiralAngle: document.getElementById('spiralAngle'),
+                    bpmControl: document.getElementById('bpmControl'),
+                    rpmDisplay: document.getElementById('rpmDisplay'),
+                    spiralStatus: document.getElementById('spiralStatus'),
+                    angleDisplay: document.getElementById('angleDisplay'),
+                    bpmDisplay: document.getElementById('bpmDisplay'),
+                    playPauseSpiral: document.getElementById('playPauseSpiral'),
+                    extractPalette: document.getElementById('extractPalette'),
+                    prevMandala: document.getElementById('prevMandala'),
+                    nextMandala: document.getElementById('nextMandala'),
+                    randomMandala: document.getElementById('randomMandala'),
+                    paletteColors: document.getElementById('paletteColors'),
+                    spiralCanvas: document.getElementById('spiralCanvas'),
+                    spiralInfo: document.getElementById('spiralInfo'),
+                    pixelMarker: document.getElementById('pixelMarker'),
+                    magnifier: document.getElementById('magnifier'),
+                    magnifierCanvas: document.getElementById('magnifierCanvas'),
+                    discoTrack: document.getElementById('discoTrack'),
+                    instrumentSelector: document.getElementById('instrumentSelector')
+                };
+
+                this.spiralCtx = this.elements.spiralCanvas.getContext('2d');
+                this.magnifierCtx = this.elements.magnifierCanvas.getContext('2d');
+            }
+
+            bindEvents() {
+                // Rotation control
+                this.elements.rotationSpeed.addEventListener('input', (e) => {
+                    const rpm = parseInt(e.target.value);
+                    this.elements.rpmDisplay.textContent = `${rpm} RPM`;
+                    this.updateRotation(rpm);
+                });
+
+                // Spiral controls
+                this.elements.spiralSpeed.addEventListener('input', (e) => {
+                    const speed = parseInt(e.target.value);
+                    this.elements.spiralStatus.textContent = speed > 0 ? `Speed: ${speed}` : 'Stopped';
+                });
+
+                this.elements.spiralAngle.addEventListener('input', (e) => {
+                    const angle = parseInt(e.target.value);
+                    this.elements.angleDisplay.textContent = `${angle}°`;
+                });
+
+                // BPM control
+                this.elements.bpmControl.addEventListener('input', (e) => {
+                    this.bpm = parseInt(e.target.value);
+                    if (this.bpm >= 999) {
+                        this.elements.bpmDisplay.textContent = 'Continuous';
+                    } else {
+                        this.elements.bpmDisplay.textContent = `${this.bpm} BPM`;
+                    }
+                });
+
+                // Button events
+                this.elements.playPauseSpiral.addEventListener('click', () => this.toggleSpiral());
+                this.elements.extractPalette.addEventListener('click', () => this.extractPalette());
+                this.elements.prevMandala.addEventListener('click', () => this.previousMandala());
+                this.elements.nextMandala.addEventListener('click', () => this.nextMandala());
+                this.elements.randomMandala.addEventListener('click', () => this.randomMandala());
+
+                // Image load event
+                this.elements.mandalaImage.addEventListener('load', () => {
+                    this.extractPalette();
+                    // Create static reference for magnifier
+                    setTimeout(() => {
+                        this.createStaticMandalaReference();
+                    }, 100); // Small delay to ensure image is fully rendered
+                });
+
+                // Instrument selector events
+                this.setupInstrumentSelector();
+
+                // Keyboard events for color palette
+                this.setupKeyboardControls();
+            }
+
+            setupInstrumentSelector() {
+                const instrumentOptions = this.elements.instrumentSelector.querySelectorAll('.instrument-option');
+                
+                instrumentOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        // Remove active class from all options
+                        instrumentOptions.forEach(opt => opt.classList.remove('active'));
+                        // Add active class to clicked option
+                        option.classList.add('active');
+                        
+                        // Update current instrument
+                        this.currentInstrument = option.dataset.instrument;
+                        this.synth = this.synths[this.currentInstrument];
+                    });
+                });
+            }
+
+            setupKeyboardControls() {
+                // Define keyboard mapping for color palette
+                this.keyMap = {
+                    'a': 0, 's': 1, 'd': 2, 'f': 3, 'g': 4,
+                    'h': 5, 'j': 6, 'k': 7, 'l': 8
+                };
+
+                // Track pressed keys to avoid repeated events
+                this.pressedKeys = new Set();
+
+                document.addEventListener('keydown', (e) => {
+                    const key = e.key.toLowerCase();
+                    
+                    // Prevent repeated events while key is held down
+                    if (this.pressedKeys.has(key)) return;
+                    this.pressedKeys.add(key);
+
+                    // Check if it's a mapped key and we have a palette
+                    if (this.keyMap.hasOwnProperty(key) && this.currentPalette.length > 0) {
+                        const colorIndex = this.keyMap[key];
+                        if (colorIndex < this.currentPalette.length) {
+                            this.playColorByIndex(colorIndex);
+                            this.highlightColorKey(colorIndex);
+                        }
+                    }
+                });
+
+                document.addEventListener('keyup', (e) => {
+                    const key = e.key.toLowerCase();
+                    this.pressedKeys.delete(key);
+                    
+                    // Remove highlight when key is released
+                    if (this.keyMap.hasOwnProperty(key)) {
+                        const colorIndex = this.keyMap[key];
+                        this.removeHighlightColorKey(colorIndex);
+                    }
+                });
+            }
+
+            loadCurrentMandala() {
+                const mandala = this.mandalas[this.mandalaIndex];
+                // Set crossorigin to allow pixel sampling
+                this.elements.mandalaImage.crossOrigin = 'anonymous';
+                this.elements.mandalaImage.src = mandala.path;
+                this.elements.spiralInfo.textContent = `Book ${mandala.book}, Mandala ${mandala.number}`;
+            }
+
+            createStaticMandalaReference() {
+                // Create a static reference of the mandala for magnifier use
+                if (!this.staticMandalaCanvas) {
+                    this.staticMandalaCanvas = document.createElement('canvas');
+                    this.staticMandalaCtx = this.staticMandalaCanvas.getContext('2d');
+                    this.staticMandalaCanvas.width = 400;
+                    this.staticMandalaCanvas.height = 400;
+                }
+                
+                try {
+                    // Draw the static mandala image
+                    this.staticMandalaCtx.clearRect(0, 0, 400, 400);
+                    this.staticMandalaCtx.drawImage(this.elements.mandalaImage, 0, 0, 400, 400);
+                    return true;
+                } catch (error) {
+                    console.log('Cannot create static reference due to CORS restrictions');
+                    return false;
+                }
+            }
+
+            updateRotation(rpm) {
+                if (rpm === 0) {
+                    this.elements.mandalaImage.classList.remove('rotating');
+                    this.elements.mandalaImage.style.animationDuration = '';
+                } else {
+                    this.elements.mandalaImage.classList.add('rotating');
+                    const duration = 60 / rpm; // seconds per rotation
+                    this.elements.mandalaImage.style.animationDuration = `${duration}s`;
+                }
+            }
+
+            previousMandala() {
+                this.mandalaIndex = (this.mandalaIndex - 1 + this.mandalas.length) % this.mandalas.length;
+                this.loadCurrentMandala();
+            }
+
+            nextMandala() {
+                this.mandalaIndex = (this.mandalaIndex + 1) % this.mandalas.length;
+                this.loadCurrentMandala();
+            }
+
+            randomMandala() {
+                this.mandalaIndex = Math.floor(Math.random() * this.mandalas.length);
+                this.loadCurrentMandala();
+            }
+
+            extractPalette() {
+                try {
+                    const palette = this.colorThief.getPalette(this.elements.mandalaImage, 8);
+                    this.currentPalette = palette.map((color, index) => ({
+                        color,
+                        frequency: this.colorToFrequency(color),
+                        note: this.frequencyToNote(this.colorToFrequency(color)),
+                        index
+                    }));
+
+                    this.displayPalette();
+                } catch (error) {
+                    console.error('Error extracting palette:', error);
+                    this.elements.paletteColors.innerHTML = '<div class="status">Error extracting palette</div>';
+                }
+            }
+
+            colorToFrequency(rgb) {
+                // Johnston's synesthesia mapping with modern approach
+                const [r, g, b] = rgb;
+                
+                // Convert RGB to HSV for better musical mapping
+                const max = Math.max(r, g, b);
+                const min = Math.min(r, g, b);
+                const diff = max - min;
+                
+                let hue = 0;
+                if (diff !== 0) {
+                    if (max === r) hue = ((g - b) / diff) % 6;
+                    else if (max === g) hue = (b - r) / diff + 2;
+                    else hue = (r - g) / diff + 4;
+                }
+                hue = Math.round(hue * 60);
+                if (hue < 0) hue += 360;
+                
+                // Map hue to chromatic scale (C4 to C6)
+                const baseFreq = 261.63; // C4
+                const semitone = Math.pow(2, 1/12);
+                const octaveOffset = Math.floor((max / 255) * 24); // 2 octaves range
+                const noteOffset = Math.floor((hue / 360) * 12); // 12 semitones
+                
+                return baseFreq * Math.pow(semitone, noteOffset + octaveOffset);
+            }
+
+            frequencyToNote(frequency) {
+                const A4 = 440;
+                const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+                const semitones = Math.round(12 * Math.log2(frequency / A4)) + 69;
+                const octave = Math.floor(semitones / 12) - 1;
+                const note = noteNames[((semitones % 12) + 12) % 12];
+                return `${note}${octave}`;
+            }
+
+            displayPalette() {
+                this.elements.paletteColors.innerHTML = '';
+                
+                // Keyboard keys for the first 8 colors
+                const keyLabels = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
+                
+                this.currentPalette.forEach((item, index) => {
+                    const colorDiv = document.createElement('div');
+                    colorDiv.className = 'palette-color';
+                    colorDiv.style.backgroundColor = `rgb(${item.color.join(',')})`;
+                    
+                    // Create content with note and keyboard key
+                    const keyLabel = index < keyLabels.length ? keyLabels[index] : '';
+                    colorDiv.innerHTML = `
+                        <div class="note-label">${item.note}</div>
+                        ${keyLabel ? `<div class="key-label">${keyLabel}</div>` : ''}
+                    `;
+                    
+                    colorDiv.title = `${item.note} (${Math.round(item.frequency)}Hz) - Press ${keyLabel || 'click'} to play`;
+                    
+                    colorDiv.addEventListener('click', () => {
+                        this.playNote(item.frequency);
+                    });
+                    
+                    this.elements.paletteColors.appendChild(colorDiv);
+                });
+            }
+
+            playNote(frequency) {
+                if (Tone.context.state === 'running') {
+                    this.synth.triggerAttackRelease(frequency, "8n");
+                }
+            }
+
+            playColorByIndex(index) {
+                if (index < this.currentPalette.length) {
+                    const color = this.currentPalette[index];
+                    this.playNote(color.frequency);
+                }
+            }
+
+            highlightColorKey(index) {
+                const colorElements = this.elements.paletteColors.children;
+                if (index < colorElements.length) {
+                    colorElements[index].style.transform = 'scale(1.2)';
+                    colorElements[index].style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.8)';
+                    colorElements[index].style.zIndex = '10';
+                }
+            }
+
+            removeHighlightColorKey(index) {
+                const colorElements = this.elements.paletteColors.children;
+                if (index < colorElements.length) {
+                    colorElements[index].style.transform = '';
+                    colorElements[index].style.boxShadow = '';
+                    colorElements[index].style.zIndex = '';
+                }
+            }
+
+            toggleSpiral() {
+                if (this.isSpiralPlaying) {
+                    this.stopSpiral();
+                } else {
+                    this.startSpiral();
+                }
+            }
+
+            startSpiral() {
+                this.isSpiralPlaying = true;
+                this.elements.playPauseSpiral.textContent = 'Stop Spiral';
+                this.elements.pixelMarker.style.display = 'block';
+                this.elements.pixelMarker.classList.add('disk');
+                this.elements.magnifier.style.display = 'block';
+                this.elements.discoTrack.style.display = 'block';
+                this.spiralPosition = { angle: 0, radius: 0 };
+                this.magnifierPosition = 0;
+                this.lastBeatTime = performance.now();
+                this.magnifierStartTime = performance.now(); // Start the turntable arm movement
+                this.runSpiral();
+            }
+
+            stopSpiral() {
+                this.isSpiralPlaying = false;
+                this.elements.playPauseSpiral.textContent = 'Play Spiral';
+                this.elements.pixelMarker.style.display = 'none';
+                this.elements.pixelMarker.classList.remove('disk');
+                this.elements.magnifier.style.display = 'none';
+                this.elements.discoTrack.style.display = 'none';
+                // Reset rotation speed when spiral stops
+                this.elements.rotationSpeed.value = 0;
+                this.elements.rpmDisplay.textContent = '0 RPM';
+                this.updateRotation(0);
+                
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                }
+            }
+
+            runSpiral() {
+                if (!this.isSpiralPlaying) return;
+
+                const speed = parseInt(this.elements.spiralSpeed.value);
+                const angleStep = parseInt(this.elements.spiralAngle.value);
+                
+                if (speed > 0) {
+                    this.spiralPosition.angle += angleStep * (speed / 100);
+                    this.spiralPosition.radius += 0.5 * (speed / 100);
+                    
+                    // Update rotation speed to match spiral speed
+                    const rpm = Math.min(300, speed * 2); // Scale spiral speed to rotation speed
+                    this.elements.rotationSpeed.value = rpm;
+                    this.elements.rpmDisplay.textContent = `${rpm} RPM`;
+                    this.updateRotation(rpm);
+                    
+                    const maxRadius = 200; // Half of mandala container
+                    if (this.spiralPosition.radius > maxRadius) {
+                        this.spiralPosition = { angle: 0, radius: 0 };
+                    }
+                    
+                    this.updateSpiralPosition();
+                    
+                    // Update magnifier horizontal position continuously (disco player effect)
+                    if (this.updateMagnifierPosition) {
+                        this.updateMagnifierPosition();
+                    }
+                    
+                    // Check if we're in continuous mode (BPM at max) or beat timing mode
+                    const isContinuousMode = this.bpm >= 999;
+                    
+                    if (isContinuousMode) {
+                        // Continuous mode: play every frame like original behavior
+                        this.samplePixelColor();
+                        if (this.updateMagnifier) {
+                            this.updateMagnifier();
+                        }
+                    } else {
+                        // Beat timing mode: only sample pixel color and update magnifier on beat timing
+                        if (this.shouldPlayBeat()) {
+                            this.samplePixelColor();
+                            if (this.updateMagnifier) {
+                                this.updateMagnifier();
+                            }
+                        }
+                    }
+                    
+                    this.drawSpiralVisualization();
+                }
+
+                this.animationFrame = requestAnimationFrame(() => this.runSpiral());
+            }
+
+            shouldPlayBeat() {
+                // Skip beat timing if in continuous mode
+                if (this.bpm >= 999) {
+                    return false; // This function won't be used in continuous mode
+                }
+                
+                const currentTime = performance.now();
+                const beatInterval = (60 / this.bpm) * 1000; // Convert BPM to milliseconds per beat
+                
+                if (currentTime - this.lastBeatTime >= beatInterval) {
+                    this.lastBeatTime = currentTime;
+                    
+                    // Add visual beat pulse
+                    this.elements.pixelMarker.classList.add('beat');
+                    setTimeout(() => {
+                        this.elements.pixelMarker.classList.remove('beat');
+                    }, 200);
+                    
+                    return true;
+                }
+                return false;
+            }
+
+            updateSpiralPosition() {
+                const centerX = 200; // Half of container width
+                const centerY = 200; // Half of container height
+                
+                const radians = (this.spiralPosition.angle * Math.PI) / 180;
+                const x = centerX + this.spiralPosition.radius * Math.cos(radians);
+                const y = centerY + this.spiralPosition.radius * Math.sin(radians);
+                
+                this.elements.pixelMarker.style.left = `${x}px`;
+                this.elements.pixelMarker.style.top = `${y}px`;
+            }
+
+            samplePixelColor() {
+                // Try to sample pixel color from static reference first
+                if (this.staticMandalaCanvas && this.staticMandalaCtx) {
+                    try {
+                        const centerX = 200;
+                        const centerY = 200;
+                        const radians = (this.spiralPosition.angle * Math.PI) / 180;
+                        const x = Math.floor(centerX + this.spiralPosition.radius * Math.cos(radians));
+                        const y = Math.floor(centerY + this.spiralPosition.radius * Math.sin(radians));
+                        
+                        if (x >= 0 && x < 400 && y >= 0 && y < 400) {
+                            const imageData = this.staticMandalaCtx.getImageData(x, y, 1, 1);
+                            const [r, g, b] = imageData.data;
+                            const frequency = this.colorToFrequency([r, g, b]);
+                            
+                            // Play the note with duration based on BPM
+                            if (Tone.context.state === 'running') {
+                                const noteDuration = this.calculateNoteDuration();
+                                this.synth.triggerAttackRelease(frequency, noteDuration);
+                            }
+                            return;
+                        }
+                    } catch (error) {
+                        console.log('Error sampling from static reference');
+                    }
+                }
+                
+                // Fallback: use palette colors based on spiral position
+                this.sampleFromPalette();
+            }
+            
+            sampleFromPalette() {
+                if (this.currentPalette.length === 0) return;
+                
+                // Map spiral position to palette index
+                const paletteIndex = Math.floor((this.spiralPosition.angle / 45) % this.currentPalette.length);
+                const radiusInfluence = Math.min(this.spiralPosition.radius / 200, 1); // 0 to 1
+                
+                // Get base frequency from palette
+                const baseColor = this.currentPalette[paletteIndex];
+                let frequency = baseColor.frequency;
+                
+                // Modify frequency based on radius (higher radius = higher octave)
+                if (radiusInfluence > 0.5) {
+                    frequency *= Math.pow(2, (radiusInfluence - 0.5) * 2); // Up to 2 octaves higher
+                } else {
+                    frequency *= Math.pow(2, (radiusInfluence - 0.5) * 0.5); // Up to 0.5 octaves lower
+                }
+                
+                // Play the note with duration based on BPM
+                if (Tone.context.state === 'running') {
+                    const noteDuration = this.calculateNoteDuration();
+                    this.synth.triggerAttackRelease(frequency, noteDuration);
+                }
+            }
+
+            calculateNoteDuration() {
+                // Check if we're in continuous mode
+                if (this.bpm >= 999) {
+                    return "32n"; // Very short notes for continuous mode
+                }
+                
+                // Calculate note duration based on BPM for beat timing mode
+                // At 120 BPM = 1 beat per 500ms, we want notes to be about 1/2 beat length
+                const beatLength = 60 / this.bpm; // seconds per beat
+                const noteDuration = beatLength * 0.5; // Half beat duration
+                return `${noteDuration}s`;
+            }
+
+            updateMagnifierPosition() {
+                if (!this.elements.magnifier) return;
+                
+                // Linear movement from center to left edge like a real turntable arm
+                const currentTime = performance.now();
+                const elapsed = currentTime - this.magnifierStartTime;
+                const progress = Math.min(elapsed / this.magnifierDuration, 1); // 0 to 1 over 2 minutes
+                
+                // Container dimensions
+                const containerWidth = 400;
+                const magnifierWidth = 120;
+                const centerX = (containerWidth - magnifierWidth) / 2; // Start at center
+                const leftEdge = 0; // End at left edge
+                
+                // Linear interpolation from center to left edge
+                const currentPosition = centerX - (centerX - leftEdge) * progress;
+                
+                // Update horizontal position only, keep vertical fixed at center
+                this.elements.magnifier.style.left = `${currentPosition}px`;
+                
+                // Optional: Reset to center when reaching the edge
+                if (progress >= 1) {
+                    this.magnifierStartTime = currentTime; // Restart the cycle
+                }
+            }
+
+
+            updateMagnifier() {
+                if (!this.elements.magnifierCanvas || !this.magnifierCtx) return;
+                
+                const magnifierSize = 80;
+                
+                // Try to use static reference first
+                if (this.staticMandalaCanvas && this.staticMandalaCtx) {
+                    try {
+                        const centerX = 200;
+                        const centerY = 200;
+                        const radians = (this.spiralPosition.angle * Math.PI) / 180;
+                        const x = Math.floor(centerX + this.spiralPosition.radius * Math.cos(radians));
+                        const y = Math.floor(centerY + this.spiralPosition.radius * Math.sin(radians));
+                        
+                        // Sample a 20x20 area around the current pixel from the STATIC mandala
+                        const sampleSize = 20;
+                        
+                        if (x >= sampleSize/2 && x < 400 - sampleSize/2 && y >= sampleSize/2 && y < 400 - sampleSize/2) {
+                            const imageData = this.staticMandalaCtx.getImageData(
+                                x - sampleSize/2, 
+                                y - sampleSize/2, 
+                                sampleSize, 
+                                sampleSize
+                            );
+                            
+                            // Draw the magnified content
+                            this.magnifierCtx.clearRect(0, 0, magnifierSize, magnifierSize);
+                            this.magnifierCtx.imageSmoothingEnabled = false; // Pixelated zoom effect
+                            
+                            // Create a temporary canvas for the sampled area
+                            const tempCanvas = document.createElement('canvas');
+                            const tempCtx = tempCanvas.getContext('2d');
+                            tempCanvas.width = sampleSize;
+                            tempCanvas.height = sampleSize;
+                            tempCtx.putImageData(imageData, 0, 0);
+                            
+                            // Draw the magnified version
+                            this.magnifierCtx.drawImage(tempCanvas, 0, 0, sampleSize, sampleSize, 0, 0, magnifierSize, magnifierSize);
+                            
+                            this.drawMagnifierCrosshairs();
+                            return;
+                        }
+                    } catch (error) {
+                        console.log('Error sampling from static reference, falling back');
+                    }
+                }
+                
+                // Fallback: create a color-based visualization
+                this.drawMagnifierFallback();
+            }
+            
+            drawMagnifierCrosshairs() {
+                const magnifierSize = 80;
+                
+                // Draw crosshairs in the center
+                this.magnifierCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+                this.magnifierCtx.lineWidth = 2;
+                this.magnifierCtx.beginPath();
+                this.magnifierCtx.moveTo(magnifierSize/2 - 10, magnifierSize/2);
+                this.magnifierCtx.lineTo(magnifierSize/2 + 10, magnifierSize/2);
+                this.magnifierCtx.moveTo(magnifierSize/2, magnifierSize/2 - 10);
+                this.magnifierCtx.lineTo(magnifierSize/2, magnifierSize/2 + 10);
+                this.magnifierCtx.stroke();
+                
+                // Draw center dot
+                this.magnifierCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                this.magnifierCtx.beginPath();
+                this.magnifierCtx.arc(magnifierSize/2, magnifierSize/2, 2, 0, 2 * Math.PI);
+                this.magnifierCtx.fill();
+            }
+            
+            drawMagnifierFallback() {
+                if (this.currentPalette.length === 0) return;
+                
+                const magnifierSize = 80;
+                
+                // Clear the magnifier
+                this.magnifierCtx.clearRect(0, 0, magnifierSize, magnifierSize);
+                
+                // Get current color from palette based on position
+                const paletteIndex = Math.floor((this.spiralPosition.angle / 45) % this.currentPalette.length);
+                const color = this.currentPalette[paletteIndex].color;
+                
+                // Create a gradient pattern representing the current "pixel"
+                const gradient = this.magnifierCtx.createRadialGradient(
+                    magnifierSize/2, magnifierSize/2, 0,
+                    magnifierSize/2, magnifierSize/2, magnifierSize/2
+                );
+                gradient.addColorStop(0, `rgb(${color.join(',')})`);
+                gradient.addColorStop(0.7, `rgba(${color.join(',')}, 0.8)`);
+                gradient.addColorStop(1, `rgba(${color.join(',')}, 0.2)`);
+                
+                this.magnifierCtx.fillStyle = gradient;
+                this.magnifierCtx.fillRect(0, 0, magnifierSize, magnifierSize);
+                
+                // Add a pixelated grid effect
+                this.magnifierCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                this.magnifierCtx.lineWidth = 1;
+                const gridSize = 8;
+                for (let i = 0; i <= magnifierSize; i += gridSize) {
+                    this.magnifierCtx.beginPath();
+                    this.magnifierCtx.moveTo(i, 0);
+                    this.magnifierCtx.lineTo(i, magnifierSize);
+                    this.magnifierCtx.moveTo(0, i);
+                    this.magnifierCtx.lineTo(magnifierSize, i);
+                    this.magnifierCtx.stroke();
+                }
+                
+                this.drawMagnifierCrosshairs();
+            }
+
+            drawSpiralVisualization() {
+                const ctx = this.spiralCtx;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.fillRect(0, 0, 260, 200);
+                
+                // Draw spiral path
+                ctx.strokeStyle = '#ff6b6b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                const centerX = 130;
+                const centerY = 100;
+                const scale = 0.5;
+                
+                for (let i = 0; i <= this.spiralPosition.angle; i += 10) {
+                    const radius = (i / this.spiralPosition.angle) * this.spiralPosition.radius * scale;
+                    const radians = (i * Math.PI) / 180;
+                    const x = centerX + radius * Math.cos(radians);
+                    const y = centerY + radius * Math.sin(radians);
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                
+                ctx.stroke();
+                
+                // Draw current position
+                const currentRadians = (this.spiralPosition.angle * Math.PI) / 180;
+                const currentX = centerX + this.spiralPosition.radius * scale * Math.cos(currentRadians);
+                const currentY = centerY + this.spiralPosition.radius * scale * Math.sin(currentRadians);
+                
+                ctx.fillStyle = '#ff6b6b';
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, 4, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ModernMandalaApp();
+        });
+    </script>
+</body>
+</html>
